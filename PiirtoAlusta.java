@@ -37,11 +37,21 @@ public class PiirtoAlusta extends JPanel {
             double pisteYmpyrällä1_y = keskipiste_y + (halkaisija / 2) * Math.sin(kulma);
 
             ActionListener piirronAnimoija = new ActionListener() {
+                int i = 0;
+
                 public void actionPerformed(ActionEvent evt) {
-                    g2d.setColor(Color.CYAN);
+                    if (pisteet != null && this.i < pisteet.size()) {
+                        System.out.println(pisteet.get(i) + " " + this.i + " " + pisteet.size());
+                        this.i++;
+                    }
+                    else {
+                        System.out.println("Siirrytään seuraavaan viivaan");
+                        this.i = 0;
+                        ((javax.swing.Timer) evt.getSource()).stop();
+                    }
                 }
             };
-            Timer ajastin = new Timer(1000, piirronAnimoija);
+            Timer ajastin = new Timer(100, piirronAnimoija);
 
             for (int i = 0; i < 6; i++) {
                 if (i == 0 || i == 3) {
@@ -59,9 +69,10 @@ public class PiirtoAlusta extends JPanel {
                 this.pisteYmpyrällä2_x = keskipiste_x + (halkaisija / 2) * Math.cos(kulma);
                 this.pisteYmpyrällä2_y = keskipiste_y + (halkaisija / 2) * Math.sin(kulma); 
                 g2d.draw(new Line2D.Double(pisteYmpyrällä1_x, pisteYmpyrällä1_y, pisteYmpyrällä2_x, pisteYmpyrällä2_y));
-                int pituus = (int) Math.hypot(this.pisteYmpyrällä2_x - pisteYmpyrällä1_x, this.pisteYmpyrällä2_y - pisteYmpyrällä2_x);
+                int pituus = (int) Math.hypot(this.pisteYmpyrällä2_x - pisteYmpyrällä1_x, this.pisteYmpyrällä2_y - pisteYmpyrällä1_y);
                 this.pisteet = pisteidenLaskenta(pisteYmpyrällä1_x, pisteYmpyrällä1_y, this.pisteYmpyrällä2_x, this.pisteYmpyrällä2_y, pituus);
-                System.out.println("Jokaisen viivan pisteet jaettuna animointia varten: " + this.pisteet);
+                ajastin.start();
+                // System.out.println("Jokaisen viivan pisteet jaettuna animointia varten: " + this.pisteet);
                 pisteYmpyrällä1_x = this.pisteYmpyrällä2_x;
                 pisteYmpyrällä1_y = this.pisteYmpyrällä2_y;
             }
@@ -89,6 +100,7 @@ public class PiirtoAlusta extends JPanel {
             double y = y1 + t * (y2 - y1);
             pisteet.add(new Point2D.Double(x, y));
         }
+        System.out.println("Pistelistan koko pisteidenLaskenta: " + n);
         return pisteet;
     }
 
